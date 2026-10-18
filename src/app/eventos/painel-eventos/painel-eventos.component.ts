@@ -19,6 +19,8 @@ export class PainelEventosComponent implements OnInit {
   // Array que simula (faz um mock) dados que serão recebidos pelo backend via rest
   eventos : IEvento[];
   usuario: IUsuario;
+  // so UX: ADMIN, FUNCIONARIO e PROFESSOR criam evento; a autorizacao real e do backend
+  podeCriarEvento = this.authService.podeCriarEvento();
 
   ngOnInit() {
     this.usuario = this.authService.getUsuario();

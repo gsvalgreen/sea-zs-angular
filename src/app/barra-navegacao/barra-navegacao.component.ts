@@ -13,6 +13,13 @@ export class BarraNavegacaoComponent implements OnInit {
 
   usuario : IUsuario;
 
+  get logado() { return this.authService.estaAutenticado(); }
+
+  sair(evento: Event) {
+    evento.preventDefault();
+    this.authService.logout().subscribe();
+  }
+
   ngOnInit() {
     this.usuario = this.authService.getUsuario();
   }
