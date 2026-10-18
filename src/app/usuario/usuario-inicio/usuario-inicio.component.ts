@@ -12,7 +12,6 @@ export class UsuarioInicioComponent implements OnInit {
 
  
   ngOnInit() {
-    console.log(sessionStorage.getItem("usuario.nome"));
   }
 
 }

@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { LoginService } from '../login/login.service';
-import { IUsuario } from '../../model/IUsuario';
+import { AuthService } from '../../auth/auth.service';
+import { mensagemDeErro } from '../../auth/mensagens-erro';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
@@ -11,46 +13,40 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 })
 export class LoginComponent implements OnInit {
 
-  constructor(private loginService : LoginService, private formBuilder: FormBuilder, private router: Router) { }
+  constructor(private loginService : LoginService, private authService : AuthService, private formBuilder: FormBuilder, private router: Router) { }
   
-  usuario : IUsuario;
   loginForm: FormGroup;
   submitted = false;
+  erro: string = null;
+  enviando = false;
 
-   get f() { return this.loginForm.controls; }
+   get f() { return this.loginForm.controls; }
 
   onSubmit() {
     this.submitted = true;
-    console.log(this.loginForm.value);
-    
-    this.loginService.getUsuario(this.loginForm.value).subscribe(
-      data => {
-        this.usuario = data;  
-        console.log(this.usuario);
-        if(this.usuario != null) {
-          sessionStorage.setItem("usuario.id", this.usuario.id.toString());
-          sessionStorage.setItem("usuario.email", this.usuario.email.toString());
-          sessionStorage.setItem("usuario.nome", this.usuario.nome.toString());
-          sessionStorage.setItem("usuario.adm", this.usuario.adm.toString());
-          sessionStorage.setItem("usuario.rg", this.usuario.rg.toString());
-          sessionStorage.setItem("usuario.endereco", this.usuario.endereco.toString());
-          sessionStorage.setItem("usuario.celular", this.usuario.celular.toString());
-          sessionStorage.setItem("usuario.dataNasc", this.usuario.dataNasc.toString());
-         // sessionStorage.setItem("usuario.semestre", this.usuario.semestre.toString());
-          sessionStorage.setItem("usuario.turno", this.usuario.turno.toString());
-          sessionStorage.setItem("usuario.genero", this.usuario.genero.toString());
-          sessionStorage.setItem("usuario.tipoUsuario", this.usuario.tipoUsuario.toString());
-        
-          this.router.navigate(['/usuario-inicio']);
-        
-        }
+    this.erro = null;
+    if (this.loginForm.invalid || this.enviando) {
+      return;
+    }
+    this.enviando = true;
+    const email = this.loginForm.value.email;
+    const senha = this.loginForm.value.senha;
+    this.loginService.login(email, senha).subscribe(
+      () => {
+        this.enviando = false;
+        this.loginForm.reset();
+        this.router.navigate(['/usuario-inicio']);
+      },
+      (falha: HttpErrorResponse) => {
+        this.enviando = false;
+        this.loginForm.controls['senha'].reset();
+        // 401 e sempre generico: nao diz se o e-mail existe
+        this.erro = falha.status === 401 ? 'E-mail ou senha inválidos.' : mensagemDeErro(falha);
       });
-      console.log(this.usuario);
   }
 
   ngOnInit() {
-    this.usuario = new IUsuario();
-    if(this.usuario.id) {
+    if (this.authService.estaAutenticado()) {
       this.router.navigate(['/usuario-inicio']);
     }
     this.loginForm = this.formBuilder.group({

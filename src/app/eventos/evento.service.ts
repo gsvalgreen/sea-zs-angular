@@ -4,20 +4,19 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { IEvento } from '../model/IEvento';
 import { IAgendamento } from '../model/IAgendamento';
-import { IUsuario } from '../model/IUsuario';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EventoService {
-  usuarioLogado = new IUsuario();
   public inserirEvento(evento: IEvento) {
     
-    evento.usuarioCriador = this.usuarioLogado; 
+    evento.usuarioCriador = this.authService.getUsuario();
     return this.http.post<void>(environment.apiUrl + "/evento/inserir", evento);
     }
 
-  constructor(private http:HttpClient) { }
+  constructor(private http:HttpClient, private authService: AuthService) { }
 
   
   public getEventos() {

@@ -1,22 +1,17 @@
 import { Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
-import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { IUsuario } from '../../model/IUsuario';
+import { AuthService } from '../../auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LoginService {
 
-  constructor(private http:HttpClient) { }
+  constructor(private authService: AuthService) { }
 
-  
-  public getUsuario(usuario : IUsuario) {
-    
-    return this.http.post<IUsuario>(environment.apiUrl + "/usuario/login", usuario);
-
+  /** Login via POST /api/v1/auth/login (o /usuario/login legado esta deprecated no backend). */
+  public login(email: string, senha: string): Observable<void> {
+    return this.authService.login(email, senha);
   }
 
- 
 }

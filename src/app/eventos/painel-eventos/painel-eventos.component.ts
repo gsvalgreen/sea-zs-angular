@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from "@angular/router"
 import { EventoService } from '../evento.service';
 import { IEvento } from '../../model/IEvento';
+import { AuthService } from '../../auth/auth.service';
 import { IUsuario } from '../../model/IUsuario';
 
 /**================= CLASSE RESPONSÁVEL PELO COMPONENT DO PAINEL DE EVENTOS DA PÁGINA INICAL ===================*/
@@ -13,14 +14,14 @@ import { IUsuario } from '../../model/IUsuario';
 })
 export class PainelEventosComponent implements OnInit {
 
-  constructor(private router : Router, private eventoService : EventoService) { }
+  constructor(private router : Router, private eventoService : EventoService, private authService: AuthService) { }
 
   // Array que simula (faz um mock) dados que serão recebidos pelo backend via rest
   eventos : IEvento[];
   usuario: IUsuario;
 
   ngOnInit() {
-    this.usuario = new IUsuario();
+    this.usuario = this.authService.getUsuario();
     this.eventoService.getEventos().subscribe
     (data => {
       this.eventos = data;  
