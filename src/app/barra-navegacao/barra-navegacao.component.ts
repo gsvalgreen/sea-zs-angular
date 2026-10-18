@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { IUsuario } from '../model/IUsuario';
+import { AuthService } from '../auth/auth.service';
 
 @Component({
   selector: 'app-barra-navegacao',
@@ -8,12 +8,15 @@ import { IUsuario } from '../model/IUsuario';
 })
 export class BarraNavegacaoComponent implements OnInit {
 
-  constructor() { }
+  constructor(private authService: AuthService) { }
 
-  usuario : IUsuario;
+  get logado() { return this.authService.estaAutenticado(); }
 
-  ngOnInit() {
-    this.usuario = new IUsuario();
+  sair(evento: Event) {
+    evento.preventDefault();
+    this.authService.logout().subscribe();
   }
+
+  ngOnInit() { }
 
 }

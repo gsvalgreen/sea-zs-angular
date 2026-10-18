@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthService } from '../../auth/auth.service';
 import { IUsuario } from '../../model/IUsuario';
 
 @Component({
@@ -8,11 +9,11 @@ import { IUsuario } from '../../model/IUsuario';
 })
 export class FormUsuarioLogComponent implements OnInit {
 
-  constructor() { }
+  constructor(private authService: AuthService) { }
   usuario : IUsuario;
 
   ngOnInit() {
-    this.usuario = new IUsuario();
+    this.usuario = this.authService.getUsuario();
   }
 
 }

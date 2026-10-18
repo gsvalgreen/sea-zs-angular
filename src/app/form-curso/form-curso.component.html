@@ -32,7 +32,7 @@
       </div>
       <!--Salvar-->
       <div class="col">
-        <div class="float-right">
+        <div class="float-right" *ngIf="podeGerenciar">
         <button type="button" class="btn btn-primary btn-block btn_salvar">Salvar</button> </div>
       </div>
     </div>
@@ -55,7 +55,7 @@
             <td>{{curso.nome}}</td>
             <td>{{curso.modalidade}}</td>
             <td>{{curso.qtdSemestres}}</td>
-            <td class="btn-group AdicEdit">
+            <td class="btn-group AdicEdit" *ngIf="podeGerenciar">
             <button class="btn btn-primary btn-sm AdicEdit" type="submit"><a href="facebook.com" class="text-white">Adicionar</a></button>
             <button class="btn btn-success btn-sm AdicEdit" type="submit"><a href="google.com" class="text-white">Editar</a></button></td>
           </tr>
@@ -77,21 +77,21 @@
           <tr>
             <td>135624563457</td>
             <td>Matematica</td>
-            <td class="btn-group AdicEdit">
+            <td class="btn-group AdicEdit" *ngIf="podeGerenciar">
             <button class="btn btn-primary btn-sm AdicEdit" type="submit">+</button>
             <button class="btn btn-danger btn-sm AdicEdit" type="submit">x</button></td>
           </tr>
           <tr>
             <td>4563457345557</td>
             <td>Gestão e Governança</td>
-            <td class="btn-group AdicEdit">
+            <td class="btn-group AdicEdit" *ngIf="podeGerenciar">
             <button class="btn btn-primary btn-sm AdicEdit" type="submit">+</button>
             <button class="btn btn-danger btn-sm AdicEdit" type="submit">x</button></td>
           </tr>
           <tr>
            <td>34573457345734</td>
             <td>Java</td>
-            <td class="btn-group AdicEdit">
+            <td class="btn-group AdicEdit" *ngIf="podeGerenciar">
             <button class="btn btn-primary btn-sm AdicEdit" type="submit">+</button>
             <button class="btn btn-danger btn-sm AdicEdit" type="submit">x</button></td>
           </tr>

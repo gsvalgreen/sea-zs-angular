@@ -1,5 +1,9 @@
 <app-barra-navegacao></app-barra-navegacao>
   <div style="margin-top: 80px"></div>      
+<div *ngIf="alerta.mensagem" class="alert alert-danger alert-dismissible container" role="alert">
+  {{alerta.mensagem}}
+  <button type="button" class="close" aria-label="Fechar" (click)="alerta.limpar()"><span aria-hidden="true">&times;</span></button>
+</div>
                 <router-outlet></router-outlet>
 
 <app-rodape></app-rodape>
