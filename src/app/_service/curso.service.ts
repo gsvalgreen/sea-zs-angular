@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { IEvento } from '../model/IEvento';
 import { IAgendamento } from '../model/IAgendamento';
+import { paraIsoComOffset } from '../model/DataEnvio';
 import { AuthService } from '../auth/auth.service';
 import { ICurso } from '../model/ICurso';
 
@@ -14,7 +15,8 @@ export class CursoService {
   public inserirEvento(evento: IEvento) {
     
     evento.usuarioCriador = this.authService.getUsuario();
-    return this.http.post<void>(environment.apiUrl + "/evento/inserir", evento);
+    const corpo = Object.assign({}, evento, { inicio: paraIsoComOffset(evento.inicio), fim: paraIsoComOffset(evento.fim) });
+    return this.http.post<void>(environment.apiUrl + "/evento/inserir", corpo);
     }
 
   constructor(private http:HttpClient, private authService: AuthService) { }

@@ -8,7 +8,7 @@
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label for="nome">Nome</label>
-                <input type="text" class="form-control" name="nome" id="nome" placeholder="" value="" required="">
+                <input type="text" class="form-control" name="nome" formControlName="nome" id="nome" placeholder="" value="" required="">
                 <div class="invalid-feedback">
                     O nome é Obrigatório.
                 </div>
@@ -16,7 +16,7 @@
             <!--RG-->
             <div class="col-md-6 mb-3">
                 <label for="rg">RG</label>
-                <input type="text" class="form-control" name="rg" id="rg" placeholder="" value="" required="">
+                <input type="text" class="form-control" name="rg" formControlName="rg" id="rg" placeholder="" value="" required="">
                 <div class="invalid-feedback">
                     O RG é Obrigatório.
                 </div>
@@ -26,7 +26,7 @@
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label for="email">Email</label>
-                <input type="email" class="form-control" name="email" id="email" placeholder="seu_email@email.com">
+                <input type="email" class="form-control" name="email" formControlName="email" id="email" placeholder="seu_email@email.com">
                 <div class="invalid-feedback">
                     O E-mail é Obrigatório.
                 </div>
@@ -34,17 +34,28 @@
             <!--Celular-->
             <div class="col-md-6 mb-3">
                 <label for="celular">Celular</label>
-                <input type="text" class="form-control" name="celular" id="celular" placeholder="" required="">
+                <input type="text" class="form-control" name="celular" formControlName="celular" id="celular" placeholder="" required="">
                 <div class="invalid-feedback">
                     O telefone celular é Obrigatório.
                 </div>
+            </div>
+        </div>
+        <!--Endereço e senha-->
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="endereco">Endereço</label>
+                <input type="text" class="form-control" name="endereco" id="endereco" formControlName="endereco" required="">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="senha">Senha</label>
+                <input type="password" class="form-control" name="senha" id="senha" formControlName="senha" autocomplete="new-password" required="">
             </div>
         </div>
         <!--Gênero-->
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label for="genero">Gênero</label>
-                <select class="custom-select d-block w-100" name="genero" id="genero" required="">
+                <select class="custom-select d-block w-100" name="genero" formControlName="genero" id="genero" required="">
                     <option value="">Escolha</option>
                     <option>Masculino</option>
                     <option>Feminino</option>
@@ -53,7 +64,7 @@
             <!--Nascimento-->
             <div class="col-md-6 mb-3">
                 <label for="dataNasc">Data de Nascimento</label>
-                <input class="form-control" type="date" id="dataNasc" name="dataNasc" required pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}">
+                <input class="form-control" type="date" id="dataNasc" name="dataNasc" formControlName="dataNasc" required pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}">
                 <span class="validity"></span>
             </div>
             <div>
@@ -162,6 +173,7 @@
             </div>
         </div>
         <div>
+            <div *ngIf="erro" class="alert alert-danger mt-3" role="alert">{{erro}}</div>
             <div class="row">
                 <button class="btn btn-primary btn-lg btn-block mt-5 mx-2" type="submit">Salvar</button>
             </div>
