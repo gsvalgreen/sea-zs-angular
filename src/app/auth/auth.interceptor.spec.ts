@@ -77,8 +77,23 @@ describe('AuthInterceptor', () => {
     controller.expectOne(api + '/curso/listar').flush({}, { status: 401, statusText: 'Unauthorized' });
 
     controller.expectOne(api + '/api/v1/auth/refresh').flush(resposta('acesso-2', 'refresh-2'));
-    expect(controller.match(api + '/evento/listar').length).toBe(1);
-    expect(controller.match(api + '/curso/listar').length).toBe(1);
+    const repeticoes = controller.match(api + '/evento/listar').concat(controller.match(api + '/curso/listar'));
+    expect(repeticoes.length).toBe(2);
+    repeticoes.forEach(r => expect(r.request.headers.get('Authorization')).toBe('Bearer acesso-2'));
+    repeticoes.forEach(r => r.flush([]));
+  });
+
+  it('com apiUrl vazio aceita caminho relativo e recusa URL protocol-relative', () => {
+    const original = environment.apiUrl;
+    environment.apiUrl = '';
+    try {
+      http.get('/evento/listar').subscribe();
+      expect(controller.expectOne('/evento/listar').request.headers.get('Authorization')).toBe('Bearer acesso-1');
+      http.get('//outro-host.com/x').subscribe();
+      expect(controller.expectOne('//outro-host.com/x').request.headers.has('Authorization')).toBe(false);
+    } finally {
+      environment.apiUrl = original;
+    }
   });
 
   it('se o refresh falhar, encerra a sessao sem nova tentativa', () => {

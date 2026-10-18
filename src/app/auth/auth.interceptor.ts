@@ -69,6 +69,10 @@ export class AuthInterceptor implements HttpInterceptor {
   }
 
   private ehApi(url: string): boolean {
+    // com apiUrl='' so caminho relativo ao host; '//host' (protocol-relative) iria para outro host
+    if (environment.apiUrl === '') {
+      return url.charAt(0) === '/' && url.charAt(1) !== '/';
+    }
     return url.indexOf(environment.apiUrl + '/') === 0;
   }
 
