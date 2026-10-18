@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, of, throwError } from 'rxjs';
-import { catchError, finalize, map, share, tap } from 'rxjs/operators';
+import { Observable, of, ReplaySubject, throwError } from 'rxjs';
+import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { IUsuario } from '../model/IUsuario';
 
@@ -49,11 +49,16 @@ export class AuthService {
       if (!refreshToken) {
         return throwError(new Error('sem refresh token'));
       }
-      this.renovando = this.http.post<ITokenResponse>(environment.apiUrl + AuthService.URL_REFRESH, { refreshToken: refreshToken }).pipe(
+      // executa de imediato e independe dos assinantes: cancelar um assinante nao aborta o refresh
+      // (o backend rotaciona o token e o novo par precisa ser guardado)
+      const resultado = new ReplaySubject<string>(1);
+      this.renovando = resultado;
+      this.http.post<ITokenResponse>(environment.apiUrl + AuthService.URL_REFRESH, { refreshToken: refreshToken }).pipe(
         tap(resposta => this.guardar(resposta)),
-        map(resposta => resposta.accessToken),
-        finalize(() => this.renovando = null),
-        share()
+        map(resposta => resposta.accessToken)
+      ).subscribe(
+        token => { this.liberar(resultado); resultado.next(token); resultado.complete(); },
+        erro => { this.liberar(resultado); resultado.error(erro); }
       );
     }
     return this.renovando;
@@ -118,7 +123,7 @@ export class AuthService {
     if (claims && claims.sub) {
       usuario.id = Number.parseInt(claims.sub, 10);
     }
-    usuario.nome = this.nome;
+    usuario.nome = this.nome || (claims && claims.name) || null;
     return usuario;
   }
 
@@ -128,6 +133,12 @@ export class AuthService {
       sessionStorage.setItem(CHAVE_REFRESH, resposta.refreshToken);
     } catch (e) { /* armazenamento indisponivel: a sessao nao sobrevive ao recarregar */ }
     this.nome = resposta.usuario ? resposta.usuario.nome : null;
+  }
+
+  private liberar(resultado: Observable<string>) {
+    if (this.renovando === resultado) {
+      this.renovando = null;
+    }
   }
 
   private limpar() {
@@ -154,7 +165,8 @@ export class AuthService {
     }
     try {
       const payload = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
-      return JSON.parse(atob(payload));
+      // atob devolve latin1: reinterpreta os bytes como UTF-8 (nomes acentuados)
+      return JSON.parse(decodeURIComponent(escape(atob(payload))));
     } catch (e) {
       return null;
     }

@@ -47,6 +47,26 @@ describe('AuthService', () => {
     expect(service.getUsuario().id).toBeUndefined();
   });
 
+  it('cancelar o assinante nao aborta o refresh: o novo par e guardado', () => {
+    sessionStorage.setItem('auth.refreshToken', 'r1');
+    service.renovar().subscribe().unsubscribe();
+    const req = controller.expectOne(environment.apiUrl + '/api/v1/auth/refresh');
+    req.flush({ tokenType: 'Bearer', accessToken: 'a2', expiresIn: 900, refreshToken: 'r2',
+      usuario: { id: 7, nome: 'Ana', tipoUsuario: 'PROFESSOR', authorities: [] } });
+    expect(sessionStorage.getItem('auth.refreshToken')).toBe('r2');
+    expect(sessionStorage.getItem('auth.accessToken')).toBe('a2');
+    // liberado: nova chamada gera nova requisicao
+    service.renovar().subscribe(() => {}, () => {});
+    controller.expectOne(environment.apiUrl + '/api/v1/auth/refresh').flush({}, { status: 401, statusText: 'Unauthorized' });
+  });
+
+  it('le o nome (UTF-8) do claim name do JWT apos recarregar', () => {
+    const json = JSON.stringify({ sub: '7', name: 'José Conceição', roles: [] });
+    const payload = btoa(unescape(encodeURIComponent(json)));
+    sessionStorage.setItem('auth.accessToken', 'x.' + payload + '.y');
+    expect(service.getUsuario().nome).toBe('José Conceição');
+  });
+
   it('logout limpa tudo e revoga o refresh token no backend', () => {
     sessionStorage.setItem('auth.accessToken', 'a');
     sessionStorage.setItem('auth.refreshToken', 'r1');
