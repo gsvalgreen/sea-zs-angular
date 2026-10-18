@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { IEvento } from '../model/IEvento';
@@ -14,7 +15,7 @@ export class CursoService {
   public inserirEvento(evento: IEvento) {
     
     evento.usuarioCriador = this.usuarioLogado; 
-    return this.http.post<void>("http://localhost:8080/evento/inserir", evento);
+    return this.http.post<void>(environment.apiUrl + "/evento/inserir", evento);
     }
 
   constructor(private http:HttpClient) { }
@@ -22,7 +23,7 @@ export class CursoService {
   
   public getCursos() {
     
-    return this.http.post<ICurso[]>("http://localhost:8080/curso/listar", null);
+    return this.http.post<ICurso[]>(environment.apiUrl + "/curso/listar", null);
 
   }
 

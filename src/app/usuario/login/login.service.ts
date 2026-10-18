@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { IUsuario } from '../../model/IUsuario';
@@ -13,7 +14,7 @@ export class LoginService {
   
   public getUsuario(usuario : IUsuario) {
     
-    return this.http.post<IUsuario>("http://localhost:8080/usuario/login", usuario);
+    return this.http.post<IUsuario>(environment.apiUrl + "/usuario/login", usuario);
 
   }
 
